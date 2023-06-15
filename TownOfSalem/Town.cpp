@@ -1,6 +1,7 @@
-#include <iostream>
 #include "Town.h"
 #include "Actions.h"
+#include "OtherFunctions.h"
+#include "resource.h"
 
 Town::Town() {
 	FillTown();
@@ -14,8 +15,9 @@ void Town::FillTown() {
 	for (int i = 0; i < iSize; i++) {
 		Townies[i] = new Townie;
 	}
+
 	for (int i = 0; i < iSize; i++) {
-		Townies[i]->name = "Ben_" + std::to_string(i);
+		Townies[i]->name = wstringToString(get_random_line_rc(IDR_TXT1));// +L" " + get_random_line_rc(IDR_TXT2));
 		//Townies[i] = &townie;
 	}
 }

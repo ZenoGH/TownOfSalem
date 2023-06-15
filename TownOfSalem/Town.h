@@ -4,6 +4,7 @@
 #include <random>
 #include <windows.h>
 #include <string>
+#include <iostream>
 #include "Townie.h"
 #include "Actions.h"
 

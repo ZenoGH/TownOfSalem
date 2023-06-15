@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -129,15 +129,28 @@
   <ItemGroup>
     <ClCompile Include="Actions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OtherFunctions.cpp" />
     <ClCompile Include="Role.cpp" />
     <ClCompile Include="Town.cpp" />
     <ClCompile Include="Townie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actions.h" />
+    <ClInclude Include="OtherFunctions.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Role.h" />
     <ClInclude Include="Town.h" />
     <ClInclude Include="Townie.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="first-names.txt" />
+    <Text Include="last-names.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="text1.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
