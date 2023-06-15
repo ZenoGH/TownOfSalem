@@ -48,8 +48,9 @@ void Town::Think() {
 	if (bDay) {
 		DoDay();
 		CheckTown();
-		Sleep(1000);
+		Sleep(5000);
 		DoVoting();
+		Sleep(5000);
 		CheckTown();
 	}
 	else {
@@ -141,6 +142,7 @@ void Town::DoVoting() {
 void Town::CheckTown() {
 	int AliveTownies = 0;
 	int AliveEvils = 0;
+	int Alives = 0;
 	for (int i = 0; i < iSize; i++) {
 		if (Townies[i]->bAlive) {
 			if (!Townies[i]->role->bHostile) {
@@ -167,6 +169,14 @@ void Town::CheckTown() {
 			exit(0);
 		}
 	}
+	std::cout << "Alive Townies:" << std::endl;
+	for (int i = 0; i < iSize; i++) {
+		if (Townies[i]->bAlive) {
+			Alives++;
+			std::cout << i << ") " << Townies[i]->role->name << " " << Townies[i]->name << std::endl;
+		}
+	}
+	std::cout << "Total: " << Alives << std::endl;
 }
 
 
