@@ -6,10 +6,12 @@ public:
 	std::string name;
 	//const char* name;
 	Role* role = nullptr;
+	Faction* faction = nullptr;
 	bool bAlive = true;
 	bool bProtected = false;
 	bool bBlocked = false;
 	bool bMarkedForDeath = false;
+	bool bBitten = false;
 	bool iVotes = 0;
 	bool DoAction(Townie* pTarget);
 };
