@@ -3,6 +3,9 @@
 using namespace std;
 
 int main() {
-	Town MyTown;
+	int Size;
+	cout << "How many town members? ";
+	cin >> Size;
+	Town MyTown(Size);
 	return 0;
 }

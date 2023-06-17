@@ -3,7 +3,9 @@
 #include "OtherFunctions.h"
 #include "resource.h"
 enum {SKLRS, ZOMBIES, TOWN};
-Town::Town() {
+Town::Town(int Size) {
+	iSize = Size;
+	Townies = new Townie * [iSize];
 	srand(time(NULL));
 	FillTown();
 	AssignRoles();
@@ -29,8 +31,9 @@ void Town::AssignRoles() {
 	Factions[SKLRS] = faction;
 	role->name = "Serial Killer";
 	role->pAction = &Attack;
+	role->bHostile = true;
 	faction->name = "Serial Killers";
-	faction->bHostile = true;
+	faction->default_role = role;
 	Roles.insert({ role, faction });
 
 	role = new Role;
@@ -38,8 +41,9 @@ void Town::AssignRoles() {
 	Factions[ZOMBIES] = faction;
 	role->name = "Zombie";
 	role->pAction = &Bite;
+	role->bHostile = true;
 	faction->name = "Zombies";
-	faction->bHostile = true;
+	faction->default_role = role;
 	faction->bIntel = true;
 	Roles.insert({ role, faction });
 
@@ -49,15 +53,26 @@ void Town::AssignRoles() {
 	Factions[TOWN] = faction;
 	role->name = "Clown";
 	role->pAction = &Block;
+	role->bHostile = false;
 	faction->name = "Town";
-	faction->bHostile = false;
+	faction->default_role = role;
+	
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	role->name = "Bodyguard";
 	role->pAction = &Protect;
+	role->bHostile = false;
 	faction->name = "Town";
-	faction->bHostile = false;
+	
+	Roles.insert({ role, faction });
+
+	role = new Role;
+	role->name = "Vigilante";
+	role->pAction = &Attack;
+	role->bHostile = true;
+	faction->name = "Town";
+	
 	Roles.insert({ role, faction });
 
 	// Seed the random number generator
@@ -74,6 +89,7 @@ void Town::AssignRoles() {
 		auto it = std::next(Roles.begin(), randIndex);
 		Townies[i]->role = it->first;
 		Townies[i]->faction = Roles[it->first];
+		vecTownies.push_back(Townies[i]);
 		//Townies[i]->role = &role;
 	}
 }
@@ -81,10 +97,11 @@ void Town::AssignRoles() {
 void Town::Think() {
 	if (bDay) {
 		DoDay();
+		PrintTownies();
 		CheckTown();
 		Sleep(5000);
 		DoVoting();
-		Sleep(5000);
+		Sleep(1000);
 		CheckTown();
 	}
 	else {
@@ -99,16 +116,28 @@ void Town::DoDay() {
 	for (int i = 0; i < iSize; i++) {
 		if (Townies[i]->bMarkedForDeath and !Townies[i]->bProtected) {
 			Townies[i]->bAlive = false;
-			std::cout << "[" << Townies[i]->role->name << "] " << Townies[i]->name << " died." << std::endl;
+			std::cout << FormatDisplayName(Townies[i]) << " was killed." << std::endl;
 		}
 		else if (Townies[i]->bBitten and !Townies[i]->bProtected) {
 			//auto it = std::next(Roles.begin(), ZOMBIES+1);
-			//Townies[i]->role = it->first;
+			Townies[i]->role = Factions[ZOMBIES]->default_role;
 			Townies[i]->faction = Factions[ZOMBIES];
 			//std::cout << Townies[i]->role->name << " " << Townies[i]->name << " was bitten." << std::endl;
 		}
 		else if (Townies[i]->bMarkedForDeath or Townies[i]->bBitten) {
-			std::cout << "[" << Townies[i]->role->name << "] " << Townies[i]->name << " was attacked, but got protected!" << std::endl;
+			std::cout << FormatDisplayName(Townies[i]) << " was attacked, but got protected!" << std::endl;
+		}
+		if (Townies[i]->bAlive and Townies[i]->role == Factions[ZOMBIES]->default_role) {
+			if (Townies[i]->iNightsToLive < 0) {
+				Townies[i]->iNightsToLive = 2;
+			}
+		}
+		if (Townies[i]->bAlive and Townies[i]->iNightsToLive > 0) {
+			Townies[i]->iNightsToLive--;
+		}
+		if (Townies[i]->bAlive and Townies[i]->iNightsToLive == 0) {
+			Townies[i]->bAlive = false;
+			std::cout << FormatDisplayName(Townies[i]) << " has expired." << std::endl;
 		}
 		Townies[i]->bBlocked = false;
 		Townies[i]->bMarkedForDeath = false;
@@ -139,7 +168,7 @@ void Town::DoNight() {
 			}
 			Townie* Target = Townies[rand() % iSize];
 
-			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel)) {
+			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->bHostile)) {
 				Target = Townies[rand() % iSize];
 			}
 			while (Target == Doer or !Target->bAlive) {
@@ -162,7 +191,7 @@ void Town::DoVoting() {
 			while (Target == Doer or !Target->bAlive or Target->faction == Doer->faction and Doer->faction->bIntel) {
 				Target = Townies[rand() % iSize];
 			}
-			std::cout << "[" << Doer->role->name << "] " << Doer->name << " voted for [" << Target->role->name << "] " << Target->name << std::endl;
+			std::cout << FormatDisplayName(Doer) << " voted for " << FormatDisplayName(Target) << std::endl;
 			Target->iVotes++;
 		}
 		int Alives = 0;
@@ -172,15 +201,23 @@ void Town::DoVoting() {
 			}
 		}
 		Townie* MostVotes = nullptr;
+		int EqualVotes = 0;
 		for (int i = 0; i < iSize; i++) {
 			if (MostVotes == nullptr or Townies[i]->iVotes > MostVotes->iVotes) {
-				MostVotes = Townies[i];
+				MostVotes = MostVotes = Townies[i];
+			}
+			else if (Townies[i]->iVotes == MostVotes->iVotes) {
+				EqualVotes = MostVotes->iVotes;
 			}
 		}
 		Sleep(1000);
-		if (MostVotes != nullptr and MostVotes->iVotes >= Alives / 4) {
+		std::cout << "Voting results:" << std::endl;
+		if (MostVotes != nullptr and MostVotes->iVotes >= Alives / 2 and MostVotes->iVotes > EqualVotes) {
 			MostVotes->bAlive = false;
-			std::cout << "[" << MostVotes->role->name << "] " << MostVotes->name << " was voted out." << std::endl;
+			std::cout << FormatDisplayName(MostVotes) << " was voted out." << " (" << MostVotes->iVotes << " votes, " <<(double)MostVotes->iVotes / (double)Alives * 100 << "%)" << std::endl;
+		}
+		else {
+			std::cout << "Not enough votes." << std::endl;
 		}
 	}
 }
@@ -203,7 +240,7 @@ void Town::CheckTown() {
 			bInAction = false;
 			for (int i = 0; i < iSize; i++) {
 				if (Townies[i]->bAlive) {
-					std::cout << "[" << Townies[i]->role->name << "] " << Townies[i]->name << " wins!" << std::endl;
+					std::cout << FormatDisplayName(Townies[i]) << " wins!" << std::endl;
 					WinningFaction = Townies[i]->faction;
 				}
 			}
@@ -216,16 +253,27 @@ void Town::CheckTown() {
 				exit(0);
 			}
 		}
+}
+
+void Town::PrintTownies() {
+	int Alives = 0;
+	for (int i = 0; i < iSize; i++) {
+		if (Townies[i]->bAlive) {
+			Alives++;
+		}
+	}
 	std::cout << "Alive Townies:" << std::endl;
 	for (int i = 0; i < iSize; i++) {
 		if (Townies[i]->bAlive) {
-			std::cout << i+1 << ") [" << Townies[i]->role->name << "] " << Townies[i]->name << std::endl;
+			std::cout << i + 1 << ") " << FormatDisplayName(Townies[i]) << std::endl;
 		}
 	}
 	std::cout << "Total: " << Alives << std::endl;
 }
 
-
+std::string Town::FormatDisplayName(Townie* townie) {
+	return "[" + townie->faction->name + "] (" + townie->role->name + ") " + townie->name;
+}
 
 void Town::ClearTown() {
 	for (int i = 0; i < iSize; i++) {

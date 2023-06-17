@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <time.h>
+#include <vector>
 #include "Townie.h"
 #include "Actions.h"
 
@@ -18,15 +19,18 @@ class Town {
 		bool bInAction = true;
 		bool bDay = false;
 		bool bAI = true;
-		int iSize = 15;
-		Townie** Townies = new Townie* [iSize];
-		explicit Town();
+		int iSize = 10;
+		Townie** Townies;
+		std::vector<Townie*> vecTownies;
+		Town(int);
 		void FillTown();
 		void AssignRoles();
 		void Think();
 		void ClearTown();
 		void RemoveTownie(Townie* Townie);
 		void CheckTown();
+		void PrintTownies();
+		static std::string FormatDisplayName(Townie*);
 		void DoDay();
 		void DoNight();
 		void DoVoting();

@@ -53,10 +53,10 @@ bool Block(Townie* pTarget, Townie* pCaller) {
 
 void print_action(std::string action, Townie* pTarget, Townie* pCaller, bool success) {
 	if (success) {
-		std::cout << pCaller->role->name << " " << pCaller->name << " " << action << " " << pTarget->role->name << " " << pTarget->name << std::endl;
+		std::cout << Town::FormatDisplayName(pCaller) << " " << action << " " << Town::FormatDisplayName(pTarget) << std::endl;
 	}
 	else
 	{
-		std::cout << pCaller->role->name << " " << pCaller->name << " " << action << " " << pTarget->role->name << " " << pTarget->name << ", but failed!" << std::endl;
+		std::cout << Town::FormatDisplayName(pCaller) << " " << action << " " << Town::FormatDisplayName(pTarget) << ", but failed!" << std::endl;
 	}
 }

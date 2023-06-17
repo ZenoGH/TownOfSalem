@@ -4,7 +4,7 @@ class Townie;
 class Role {
 public:
 	std::string name;
-	//bool bHostile;
+	bool bHostile;
 	bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	bool DoAction(Townie* pTarget, Townie* pCaller);
 };
@@ -12,8 +12,9 @@ public:
 class Faction {
 public:
 	std::string name;
-	bool bHostile;
+	//bool bHostile;
 	bool bIntel = false;
+	Role* default_role = nullptr;
 	//bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	//bool DoAction(Townie* pTarget, Townie* pCaller);
 };

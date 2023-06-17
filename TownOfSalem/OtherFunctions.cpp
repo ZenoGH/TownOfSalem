@@ -71,3 +71,4 @@ const wchar_t* GetResource(WORD file_name)
 	return data;
 }
 
+
