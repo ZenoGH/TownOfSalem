@@ -14,6 +14,5 @@ public:
 	bool bBitten = false;
 	int iVotes = 0;
 	int iNightsToLive = -1;
-	int index;
 	bool DoAction(Townie* pTarget);
 };

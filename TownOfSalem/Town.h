@@ -14,7 +14,6 @@
 
 class Town {
 	public:
-		enum { SKLRS, ZOMBIES, TOWN };
 		std::map <Role*, Faction*> Roles;
 		Faction* Factions[3];
 		bool bInAction = true;
