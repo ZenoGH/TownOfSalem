@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -133,6 +133,7 @@
     <ClCompile Include="Role.cpp" />
     <ClCompile Include="Town.cpp" />
     <ClCompile Include="Townie.cpp" />
+    <ClCompile Include="Visit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actions.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Role.h" />
     <ClInclude Include="Town.h" />
     <ClInclude Include="Townie.h" />
+    <ClInclude Include="Visit.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="first-names.txt" />
