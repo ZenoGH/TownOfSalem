@@ -2,7 +2,7 @@
 #include "Actions.h"
 #include "OtherFunctions.h"
 #include "resource.h"
-enum {SKLRS, ZOMBIES, TOWN};
+
 Town::Town(int Size) {
 	iSize = Size;
 	Townies = new Townie * [iSize];
@@ -21,6 +21,7 @@ void Town::FillTown() {
 
 	for (int i = 0; i < iSize; i++) {
 		Townies[i]->name = wstringToString(get_random_line_rc(IDR_TXT1));// +L" " + get_random_line_rc(IDR_TXT2));
+		Townies[i]->index = i;
 		//Townies[i] = &townie;
 	}
 }
@@ -30,21 +31,21 @@ void Town::AssignRoles() {
 	Faction* faction = new Faction; // Serial Killers
 	Factions[SKLRS] = faction;
 	role->name = "Serial Killer";
-	role->pAction = &Attack;
-	role->bHostile = true;
+	role->action = Action::Actions[Action::ATTACK];
 	faction->name = "Serial Killers";
 	faction->default_role = role;
+	faction->index = SKLRS;
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	faction = new Faction; // Zombies
 	Factions[ZOMBIES] = faction;
 	role->name = "Zombie";
-	role->pAction = &Bite;
-	role->bHostile = true;
+	Action::Actions[Action::BITE];
 	faction->name = "Zombies";
 	faction->default_role = role;
 	faction->bIntel = true;
+	faction->index = ZOMBIES;
 	Roles.insert({ role, faction });
 
 
@@ -52,25 +53,23 @@ void Town::AssignRoles() {
 	faction = new Faction; //Town
 	Factions[TOWN] = faction;
 	role->name = "Clown";
-	role->pAction = &Block;
-	role->bHostile = false;
+	Action::Actions[Action::BLOCK];
 	faction->name = "Town";
 	faction->default_role = role;
-	
+	faction->index = TOWN;
+
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	role->name = "Bodyguard";
-	role->pAction = &Protect;
-	role->bHostile = false;
+	Action::Actions[Action::PROTECT];
 	faction->name = "Town";
 	
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	role->name = "Vigilante";
-	role->pAction = &Attack;
-	role->bHostile = true;
+	Action::Actions[Action::ATTACK];
 	faction->name = "Town";
 	
 	Roles.insert({ role, faction });
@@ -147,12 +146,13 @@ void Town::DoDay() {
 	}
 }
 
+
 void Town::DoNight() {
 	std::cout << "Night" << std::endl;
 	if (bAI) {
 		for (int i = 0; i < iSize; i++) {
 			Townie* Doer = Townies[i];
-			if (Doer->role->pAction != &Block or !Doer->bAlive) {
+			if (Doer->role->action->pAction != &Block or !Doer->bAlive) {
 				continue;
 			}
 			Townie* Target = Townies[rand() % iSize];
@@ -163,12 +163,12 @@ void Town::DoNight() {
 		}
 		for (int i = 0; i < iSize; i++) {
 			Townie* Doer = Townies[i];
-			if (Doer->role->pAction == &Block or !Doer->bAlive) {
+			if (Doer->role->action->pAction == &Block or !Doer->bAlive) {
 				continue;
 			}
 			Townie* Target = Townies[rand() % iSize];
 
-			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->bHostile)) {
+			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->action->bHostile)) {
 				Target = Townies[rand() % iSize];
 			}
 			while (Target == Doer or !Target->bAlive) {
@@ -178,6 +178,7 @@ void Town::DoNight() {
 		}
 	}
 }
+
 
 void Town::DoVoting() {
 	std::cout << "Voting" << std::endl;
