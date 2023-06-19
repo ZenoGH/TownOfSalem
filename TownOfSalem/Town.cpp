@@ -107,12 +107,13 @@ void Town::Think() {
 	else {
 		CheckTown();
 		DoNight();
+		iDay++;
 	}
 	bDay = !bDay;
 }
 
 void Town::DoDay() {
-	std::cout << "Day" << std::endl;
+	std::cout << "Day" << iDay << std::endl;
 	for (int i = 0; i < iSize; i++) {
 		if (Townies[i]->bMarkedForDeath and !Townies[i]->bProtected) {
 			Townies[i]->bAlive = false;
@@ -144,11 +145,12 @@ void Town::DoDay() {
 		Townies[i]->bBitten = false;
 		Townies[i]->bProtected = false;
 		Townies[i]->iVotes = 0;
+		
 	}
 }
 
 void Town::DoNight() {
-	std::cout << "Night" << std::endl;
+	std::cout << "Night" << iDay << std::endl;
 	if (bAI) {
 		for (int i = 0; i < iSize; i++) {
 			Townie* Doer = Townies[i];

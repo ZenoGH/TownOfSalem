@@ -51,6 +51,33 @@ bool Block(Townie* pTarget, Townie* pCaller) {
 	return false;
 }
 
+
+
+
+
+void SetupActions() {
+	Action* action = new Action;
+	action->index = Action::ATTACK;
+	action->pAction = &Attack;
+	action->bHostile = true;
+		
+	action = new Action;
+	action->index = Action::BITE;
+	action->pAction = &Bite;
+	action->bHostile = true;
+
+	action = new Action;
+	action->index = Action::PROTECT;
+	action->pAction = &Protect;
+	action->bHostile = true;
+
+	action = new Action;
+	action->index = Action::BLOCK;
+	action->pAction = &Block;
+	action->bHostile = true;
+
+}
+
 void print_action(std::string action, Townie* pTarget, Townie* pCaller, bool success) {
 	if (success) {
 		std::cout << Town::FormatDisplayName(pCaller) << " " << action << " " << Town::FormatDisplayName(pTarget) << std::endl;
