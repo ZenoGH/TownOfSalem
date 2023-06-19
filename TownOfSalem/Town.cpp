@@ -85,7 +85,6 @@ void Town::AssignRoles() {
 	role = new Role;
 	role->name = "Civilian";
 	role->action = nullptr;
-	role->bHostile = true;
 	faction->name = "Town";
 	Roles.insert({ role, faction });
 
