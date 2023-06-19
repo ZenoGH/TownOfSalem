@@ -11,7 +11,7 @@ bool Attack(Townie* pTarget, Townie* pCaller) {
 			return true;
 		}
 	}
-	print_action("attacked", pTarget, pCaller, false);
+	print_action("attack", pTarget, pCaller, false);
 	return false;
 }
 
@@ -23,7 +23,7 @@ bool Bite(Townie* pTarget, Townie* pCaller) {
 			return true;
 		}
 	}
-	print_action("bit", pTarget, pCaller, false);
+	print_action("bite", pTarget, pCaller, false);
 	return false;
 }
 
@@ -35,7 +35,7 @@ bool Protect(Townie* pTarget, Townie* pCaller) {
 			return true;
 		}
 	}
-	print_action("protected", pTarget, pCaller, false);
+	print_action("protect", pTarget, pCaller, false);
 	return false;
 }
 
@@ -47,11 +47,22 @@ bool Block(Townie* pTarget, Townie* pCaller) {
 			return true;
 		}
 	}
-	print_action("blocked", pTarget, pCaller, false);
+	print_action("block", pTarget, pCaller, false);
 	return false;
 }
 
-
+bool Brainwash(Townie* pTarget, Townie* pCaller) {
+	if (pTarget != nullptr and pCaller != nullptr) {
+		if (!pTarget->bProtected and !pCaller->bBlocked) {
+			//pTarget->faction = pCaller->faction;
+			pTarget->bBrainwashed = true;
+			print_action("paid off", pTarget, pCaller, true);
+			return true;
+		}
+	}
+	print_action("pay off", pTarget, pCaller, false);
+	return false;
+}
 
 
 
@@ -76,6 +87,11 @@ void SetupActions() {
 	action->pAction = &Block;
 	action->bHostile = true;
 
+	action = new Action;
+	action->index = Action::BRAINWASH;
+	action->pAction = &Brainwash;
+	action->bHostile = true;
+
 }
 
 void print_action(std::string action, Townie* pTarget, Townie* pCaller, bool success) {
@@ -84,6 +100,6 @@ void print_action(std::string action, Townie* pTarget, Townie* pCaller, bool suc
 	}
 	else
 	{
-		std::cout << Town::FormatDisplayName(pCaller) << " " << action << " " << Town::FormatDisplayName(pTarget) << ", but failed!" << std::endl;
+		std::cout << Town::FormatDisplayName(pCaller) << " tried to " << action << " " << Town::FormatDisplayName(pTarget) << ", but failed!" << std::endl;
 	}
 }

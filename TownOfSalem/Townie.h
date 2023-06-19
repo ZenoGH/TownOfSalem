@@ -12,7 +12,9 @@ public:
 	bool bBlocked = false;
 	bool bMarkedForDeath = false;
 	bool bBitten = false;
+	bool bBrainwashed = false;
 	int iVotes = 0;
+	int iVotingPower = 1;
 	int iNightsToLive = -1;
 	bool DoAction(Townie* pTarget);
 };

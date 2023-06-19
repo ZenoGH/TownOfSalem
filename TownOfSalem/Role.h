@@ -4,19 +4,19 @@ class Townie;
 
 class Action {
 public:
-	enum { ATTACK, BITE, PROTECT, BLOCK };
-	inline static Action* Actions[4];
+	enum { ATTACK, BITE, PROTECT, BLOCK, BRAINWASH };
+	inline static Action* Actions[5];
 	bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	int index = -1;
 	bool bHostile = NULL;
-	void SetupActions();
+	static void SetupActions();
 };
 
 class Role {
 public:
 	std::string name;
-	bool bHostile;
-	bool (*pAction)(Townie* pTarget, Townie* pCaller);
+	Action* action;
+	//bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	bool DoAction(Townie* pTarget, Townie* pCaller);
 };
 

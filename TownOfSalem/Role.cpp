@@ -2,8 +2,8 @@
 #include "Actions.h"
 
 bool Role::DoAction(Townie* pTarget, Townie* pCaller) {
-	if (pAction != nullptr) {
-		return pAction(pTarget, pCaller);
+	if (action->pAction != nullptr) {
+		return action->pAction(pTarget, pCaller);
 	}
 	return false;
 }
@@ -32,5 +32,11 @@ void Action::SetupActions() {
 	action->pAction = &Block;
 	action->bHostile = true;
 	Action::Actions[Action::BLOCK] = action;
+
+	action = new Action;
+	action->index = Action::BRAINWASH;
+	action->pAction = &Brainwash;
+	action->bHostile = true;
+	Action::Actions[Action::BRAINWASH] = action;
 
 }
