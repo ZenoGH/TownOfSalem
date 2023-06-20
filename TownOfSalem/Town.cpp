@@ -211,7 +211,7 @@ void Town::DoNight() {
 			}
 			Townie* Target = Townies[rand() % iSize];
 
-			while (!Target->bAlive or Target == Doer or ((Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->action->bHostile) or (Doer->faction != Target->faction and Doer->faction->bIntel and !Doer->role->action->bHostile))) {
+			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->action->bHostile) or (Doer->faction != Target->faction and Doer->faction->bIntel and !Doer->role->action->bHostile)) {
 				Target = Townies[rand() % iSize];
 			}
 			while (Target == Doer or !Target->bAlive) {

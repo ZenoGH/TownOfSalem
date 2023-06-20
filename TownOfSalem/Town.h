@@ -18,7 +18,7 @@ class Town {
 		Faction* Factions[4];
 		bool bInAction = true;
 		bool bDay = false;
-		bool bCustom = false;
+		bool bCustom;
 		int iDay = 0;
 		bool bAI = true;
 		int iSize = 10;

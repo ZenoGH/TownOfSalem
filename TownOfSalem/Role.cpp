@@ -24,7 +24,7 @@ void Action::SetupActions() {
 	action = new Action;
 	action->index = Action::PROTECT;
 	action->pAction = &Protect;
-	action->bHostile = true;
+	action->bHostile = false;
 	Action::Actions[Action::PROTECT] = action;
 
 	action = new Action;
