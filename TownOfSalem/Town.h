@@ -9,13 +9,14 @@
 #include <vector>
 #include "Townie.h"
 #include "Actions.h"
-
+#include "Visit.h"
 
 
 class Town {
 	public:
 		std::map <Role*, Faction*> Roles;
 		Faction* Factions[4];
+		
 		bool bInAction = true;
 		bool bDay = false;
 		bool bCustom;
@@ -23,6 +24,7 @@ class Town {
 		bool bAI = true;
 		int iSize = 10;
 		Townie** Townies;
+		Visit** Visits;
 		std::vector<Townie*> vecTownies;
 		Town(int, bool);
 		void FillTown();
@@ -32,6 +34,7 @@ class Town {
 		void RemoveTownie(Townie* Townie);
 		void CheckTown();
 		void PrintTownies();
+		void ProcessVisits(Visit* visit);
 		static std::string FormatDisplayName(Townie*);
 		void DoDay();
 		void DoNight();

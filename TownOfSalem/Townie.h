@@ -1,12 +1,17 @@
 #pragma once
 #include <string>
 #include "Role.h"
+
+class Town;
+
 class Townie {
 public:
 	std::string name;
 	//const char* name;
-	Role* role = nullptr;
-	Faction* faction = nullptr;
+	Role* pRole = nullptr;
+	Faction* pFaction = nullptr;
+	Town* pTown = nullptr;
+	//Visit* pVisit = nullptr;
 	bool bAlive = true;
 	bool bProtected = false;
 	bool bBlocked = false;
@@ -16,5 +21,6 @@ public:
 	int iVotes = 0;
 	int iVotingPower = 1;
 	int iNightsToLive = -1;
-	bool DoAction(Townie* pTarget);
+	int index = 0;
+	bool DoVisit(Townie* pTarget);
 };

@@ -1,5 +1,13 @@
 #include "Townie.h"
 
-bool Townie::DoAction(Townie* pTarget) {
-	return role->DoAction(pTarget, this);
+#include "Town.h"
+
+bool Townie::DoVisit(Townie* pTarget) {
+	Visit* pVisit = this->pTown->Visits[this->index];
+	pVisit->pTarget = pTarget;
+	pVisit->pVisitor = this;
+	pVisit->bHostile = pRole->pAction->bHostile;
+
+
+	return pRole->DoAction(pTarget, this);
 }

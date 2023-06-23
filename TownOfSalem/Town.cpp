@@ -7,6 +7,7 @@ Town::Town(int Size, bool Custom) {
 	bCustom = Custom;
 	iSize = Size;
 	Townies = new Townie * [iSize];
+	Visits = new Visit * [iSize];
 	srand(time(NULL));
 	FillTown();
 	AssignRoles();
@@ -18,11 +19,10 @@ Town::Town(int Size, bool Custom) {
 void Town::FillTown() {
 	for (int i = 0; i < iSize; i++) {
 		Townies[i] = new Townie;
-	}
-
-	for (int i = 0; i < iSize; i++) {
-		Townies[i]->name = wstringToString(get_random_line_rc(IDR_TXT1));// +L" " + get_random_line_rc(IDR_TXT2));
-		//Townies[i] = &townie;
+		Visits[i] = new Visit;
+		Townies[i]->index = i;
+		Townies[i]->pTown = this;
+		Townies[i]->name = wstringToString(get_random_line_rc(IDR_TXT1));
 	}
 }
 
@@ -32,19 +32,19 @@ void Town::AssignRoles() {
 	Faction* faction = new Faction; // Serial Killers
 	Factions[SKLRS] = faction;
 	role->name = "Serial Killer";
-	role->action = Action::Actions[Action::ATTACK];
+	role->pAction = Action::Actions[Action::ATTACK];
 	//role->bHostile = true;
 	faction->name = "Serial Killers";
-	faction->default_role = role;
+	faction->pDefaultRole = role;
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	faction = new Faction; // The Elite
 	Factions[ELITE] = faction;
 	role->name = "Elite";
-	role->action = Action::Actions[Action::BRAINWASH];
+	role->pAction = Action::Actions[Action::BRAINWASH];
 	faction->name = "The Upper Class";
-	faction->default_role = role;
+	faction->pDefaultRole = role;
 	faction->bIntel = true;
 	Roles.insert({ role, faction });
 
@@ -52,9 +52,9 @@ void Town::AssignRoles() {
 	faction = new Faction; // Zombies
 	Factions[ZOMBIES] = faction;
 	role->name = "Zombie";
-	role->action = Action::Actions[Action::BITE];
+	role->pAction = Action::Actions[Action::BITE];
 	faction->name = "Zombies";
-	faction->default_role = role;
+	faction->pDefaultRole = role;
 	faction->bIntel = true;
 	Roles.insert({ role, faction });
 
@@ -63,28 +63,28 @@ void Town::AssignRoles() {
 	faction = new Faction; //Town
 	Factions[TOWN] = faction;
 	role->name = "Clown";
-	role->action = Action::Actions[Action::BLOCK];
+	role->pAction = Action::Actions[Action::BLOCK];
 	faction->name = "Town";
-	faction->default_role = role;
+	faction->pDefaultRole = role;
 	Roles.insert({ role, faction });
 
 
 	role = new Role;
 	role->name = "Bodyguard";
-	role->action = Action::Actions[Action::PROTECT];
+	role->pAction = Action::Actions[Action::PROTECT];
 	faction->name = "Town";
 	Roles.insert({ role, faction });
 
 
 	role = new Role;
 	role->name = "Vigilante";
-	role->action = Action::Actions[Action::ATTACK];
+	role->pAction = Action::Actions[Action::ATTACK];
 	faction->name = "Town";
 	Roles.insert({ role, faction });
 
 	role = new Role;
 	role->name = "Civilian";
-	role->action = nullptr;
+	role->pAction = nullptr;
 	faction->name = "Town";
 	Roles.insert({ role, faction });
 
@@ -101,10 +101,10 @@ void Town::AssignRoles() {
 
 			// Advance an iterator to the random index
 			auto it = std::next(Roles.begin(), randIndex);
-			Townies[i]->role = it->first;
-			Townies[i]->faction = Roles[it->first];
-			if (Townies[i]->role->action == nullptr) {
-				Townies[i]->role->action = new Action;
+			Townies[i]->pRole = it->first;
+			Townies[i]->pFaction = Roles[it->first];
+			if (Townies[i]->pRole->pAction == nullptr) {
+				Townies[i]->pRole->pAction = new Action;
 			}
 			vecTownies.push_back(Townies[i]);
 			//Townies[i]->role = &role;
@@ -122,8 +122,8 @@ void Town::AssignRoles() {
 			std::cout << "Townie " << i + 1 << ": ";
 			std::cin >> index;
 			auto it = std::next(Roles.begin(), index);
-			Townies[i]->role = it->first;
-			Townies[i]->faction = Roles[it->first];
+			Townies[i]->pRole = it->first;
+			Townies[i]->pFaction = Roles[it->first];
 		}
 	}
 }
@@ -158,17 +158,17 @@ void Town::DoDay() {
 		}
 		else if (Townies[i]->bBitten and !Townies[i]->bProtected) {
 			//auto it = std::next(Roles.begin(), ZOMBIES+1);
-			Townies[i]->role = Factions[ZOMBIES]->default_role;
-			Townies[i]->faction = Factions[ZOMBIES];
+			Townies[i]->pRole = Factions[ZOMBIES]->pDefaultRole;
+			Townies[i]->pFaction = Factions[ZOMBIES];
 			//std::cout << Townies[i]->role->name << " " << Townies[i]->name << " was bitten." << std::endl;
 		}
 		else if (Townies[i]->bMarkedForDeath or Townies[i]->bBitten) {
 			std::cout << FormatDisplayName(Townies[i]) << " was attacked, but got protected!" << std::endl;
 		}
 		if (Townies[i]->bBrainwashed and !Townies[i]->bProtected) {
-			Townies[i]->faction = Factions[ELITE];
+			Townies[i]->pFaction = Factions[ELITE];
 		}
-		if (Townies[i]->bAlive and Townies[i]->role == Factions[ZOMBIES]->default_role) {
+		if (Townies[i]->bAlive and Townies[i]->pRole == Factions[ZOMBIES]->pDefaultRole) {
 			if (Townies[i]->iNightsToLive < 0) {
 				Townies[i]->iNightsToLive = 2;
 			}
@@ -195,29 +195,29 @@ void Town::DoNight() {
 	if (bAI) {
 		for (int i = 0; i < iSize; i++) {
 			Townie* Doer = Townies[i];
-			if (Doer->role->action->pAction != &Block or !Doer->bAlive) {
+			if (Doer->pRole->pAction->pActionFunc != &Block or !Doer->bAlive) {
 				continue;
 			}
 			Townie* Target = Townies[rand() % iSize];
 			while (Target == Doer or !Target->bAlive) {
 				Target = Townies[rand() % iSize];
 			}
-			Doer->DoAction(Target);
+			Doer->DoVisit(Target);
 		}
 		for (int i = 0; i < iSize; i++) {
 			Townie* Doer = Townies[i];
-			if (Doer->role->action->pAction == &Block or !Doer->bAlive) {
+			if (Doer->pRole->pAction->pActionFunc == &Block or !Doer->bAlive) {
 				continue;
 			}
 			Townie* Target = Townies[rand() % iSize];
 
-			while (!Target->bAlive or Target == Doer or (Doer->faction == Target->faction and Doer->faction->bIntel and Doer->role->action->bHostile) or (Doer->faction != Target->faction and Doer->faction->bIntel and !Doer->role->action->bHostile)) {
+			while (!Target->bAlive or Target == Doer or (Doer->pFaction == Target->pFaction and Doer->pFaction->bIntel and Doer->pRole->pAction->bHostile) or (Doer->pFaction != Target->pFaction and Doer->pFaction->bIntel and !Doer->pRole->pAction->bHostile)) {
 				Target = Townies[rand() % iSize];
 			}
 			while (Target == Doer or !Target->bAlive) {
 				Target = Townies[rand() % iSize];
 			}
-			Doer->DoAction(Target);
+			Doer->DoVisit(Target);
 		}
 	}
 }
@@ -230,11 +230,11 @@ void Town::DoVoting() {
 			if (!Doer->bAlive) {
 				continue;
 			}
-			if (Doer->faction == Factions[ELITE]) {
+			if (Doer->pFaction == Factions[ELITE]) {
 				Doer->iVotingPower++;
 			}
 			Townie* Target = Townies[rand() % iSize];
-			while (Target == Doer or !Target->bAlive or Target->faction == Doer->faction and Doer->faction->bIntel) {
+			while (Target == Doer or !Target->bAlive or Target->pFaction == Doer->pFaction and Doer->pFaction->bIntel) {
 				Target = Townies[rand() % iSize];
 			}
 			std::cout << FormatDisplayName(Doer) << " voted for " << FormatDisplayName(Target) << std::endl;
@@ -276,7 +276,7 @@ void Town::CheckTown() {
 		if (Townies[i]->bAlive) {
 			Alives++;
 			for (int j = 0; j < iSize; j++) {
-				if (Townies[j]->bAlive and Townies[i]->faction != Townies[j]->faction) {
+				if (Townies[j]->bAlive and Townies[i]->pFaction != Townies[j]->pFaction) {
 					bDifFactions = true;
 				}
 			}
@@ -287,7 +287,7 @@ void Town::CheckTown() {
 			for (int i = 0; i < iSize; i++) {
 				if (Townies[i]->bAlive) {
 					std::cout << FormatDisplayName(Townies[i]) << " wins!" << std::endl;
-					WinningFaction = Townies[i]->faction;
+					WinningFaction = Townies[i]->pFaction;
 				}
 			}
 			if (Alives < 1) {
@@ -311,15 +311,26 @@ void Town::PrintTownies() {
 	std::cout << "Alive Townies:" << std::endl;
 	for (int i = 0; i < iSize; i++) {
 		if (Townies[i]->bAlive) {
-			std::cout << i + 1 << ") " << FormatDisplayName(Townies[i]) << std::endl;
+			std::cout << FormatDisplayName(Townies[i]) << std::endl;
 		}
 	}
 	std::cout << "Total: " << Alives << std::endl;
 }
 
-std::string Town::FormatDisplayName(Townie* townie) {
-	return "[" + townie->faction->name + "] (" + townie->role->name + ") " + townie->name;
+void Town::ProcessVisits(Visit* visit) {
+	for (int i = 0; i < iSize; i++) {
+		Visit* visit = Visits[i];
+		if (visit->pAction->Actions[Action::BLOCK]) {
+			Visits[visit->pTarget->index]->bBlocked = true;
+		}
+	}
 }
+
+std::string Town::FormatDisplayName(Townie* pTownie) {
+	return "(" + std::to_string(pTownie->index + 1) + ") " + "[" + pTownie->pFaction->name + "] (" + pTownie->pRole->name + ") " + pTownie->name;
+}
+
+
 
 void Town::ClearTown() {
 	for (int i = 0; i < iSize; i++) {
@@ -330,6 +341,6 @@ void Town::ClearTown() {
 	delete[] Townies;
 }
 
-void Town::RemoveTownie(Townie* Townie) {
-	delete Townie;
+void Town::RemoveTownie(Townie* pTownie) {
+	delete pTownie;
 }

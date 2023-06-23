@@ -66,33 +66,32 @@ bool Brainwash(Townie* pTarget, Townie* pCaller) {
 
 
 
-void SetupActions() {
-	Action* action = new Action;
-	action->index = Action::ATTACK;
-	action->pAction = &Attack;
-	action->bHostile = true;
-		
-	action = new Action;
-	action->index = Action::BITE;
-	action->pAction = &Bite;
-	action->bHostile = true;
-
-	action = new Action;
-	action->index = Action::PROTECT;
-	action->pAction = &Protect;
-	action->bHostile = true;
-
-	action = new Action;
-	action->index = Action::BLOCK;
-	action->pAction = &Block;
-	action->bHostile = true;
-
-	action = new Action;
-	action->index = Action::BRAINWASH;
-	action->pAction = &Brainwash;
-	action->bHostile = true;
-
-}
+//void SetupActions() {
+//	Action* action = new Action;
+//	action->index = Action::ATTACK;
+//	action->pActionFunc = &Attack;
+//	action->bHostile = true;
+//		
+//	action = new Action;
+//	action->index = Action::BITE;
+//	action->pActionFunc = &Bite;
+//	action->bHostile = true;
+//
+//	action = new Action;
+//	action->index = Action::PROTECT;
+//	action->pActionFunc = &Protect;
+//	action->bHostile = true;
+//
+//	action = new Action;
+//	action->index = Action::BLOCK;
+//	action->pActionFunc = &Block;
+//	action->bHostile = true;
+//
+//	action = new Action;
+//	action->index = Action::BRAINWASH;
+//	action->pActionFunc = &Brainwash;
+//	action->bHostile = true;
+//}
 
 void print_action(std::string action, Townie* pTarget, Townie* pCaller, bool success) {
 	if (success) {

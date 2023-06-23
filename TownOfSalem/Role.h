@@ -6,7 +6,7 @@ class Action {
 public:
 	enum { ATTACK, BITE, PROTECT, BLOCK, BRAINWASH };
 	inline static Action* Actions[5];
-	bool (*pAction)(Townie* pTarget, Townie* pCaller);
+	bool (*pActionFunc)(Townie* pTarget, Townie* pCaller);
 	int index = -1;
 	bool bHostile = NULL;
 	static void SetupActions();
@@ -15,7 +15,7 @@ public:
 class Role {
 public:
 	std::string name;
-	Action* action;
+	Action* pAction;
 	//bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	bool DoAction(Townie* pTarget, Townie* pCaller);
 };
@@ -25,7 +25,7 @@ public:
 	std::string name;
 	//bool bHostile;
 	bool bIntel = false;
-	Role* default_role = nullptr;
+	Role* pDefaultRole = nullptr;
 	//bool (*pAction)(Townie* pTarget, Townie* pCaller);
 	//bool DoAction(Townie* pTarget, Townie* pCaller);
 };
