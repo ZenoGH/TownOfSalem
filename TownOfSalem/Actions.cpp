@@ -10,8 +10,8 @@ bool Attack(Townie* pTarget, Townie* pCaller) {
 			print_action("attacked", pTarget, pCaller, true);
 			return true;
 		}
+		print_action("attack", pTarget, pCaller, false);
 	}
-	print_action("attack", pTarget, pCaller, false);
 	return false;
 }
 
@@ -22,8 +22,8 @@ bool Bite(Townie* pTarget, Townie* pCaller) {
 			print_action("bit", pTarget, pCaller, true);
 			return true;
 		}
+		print_action("bite", pTarget, pCaller, false);
 	}
-	print_action("bite", pTarget, pCaller, false);
 	return false;
 }
 
@@ -34,8 +34,8 @@ bool Protect(Townie* pTarget, Townie* pCaller) {
 			print_action("protected", pTarget, pCaller, true);
 			return true;
 		}
+		print_action("protect", pTarget, pCaller, false);
 	}
-	print_action("protect", pTarget, pCaller, false);
 	return false;
 }
 
@@ -46,21 +46,22 @@ bool Block(Townie* pTarget, Townie* pCaller) {
 			print_action("blocked", pTarget, pCaller, true);
 			return true;
 		}
+		print_action("block", pTarget, pCaller, false);
 	}
-	print_action("block", pTarget, pCaller, false);
 	return false;
 }
 
 bool Brainwash(Townie* pTarget, Townie* pCaller) {
 	if (pTarget != nullptr and pCaller != nullptr) {
+		//auto it = std::next(Town::Roles.begin(), Town::ZOMBIES);
 		if (!pTarget->bProtected and !pCaller->bBlocked) {
 			//pTarget->faction = pCaller->faction;
 			pTarget->bBrainwashed = true;
 			print_action("paid off", pTarget, pCaller, true);
 			return true;
 		}
+		print_action("pay off", pTarget, pCaller, false);
 	}
-	print_action("pay off", pTarget, pCaller, false);
 	return false;
 }
 

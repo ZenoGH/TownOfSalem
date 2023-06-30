@@ -16,7 +16,7 @@ class Town {
 	public:
 		std::map <Role*, Faction*> Roles;
 		Faction* Factions[4];
-		
+		enum { NEUTRALS, ZOMBIES, TOWN, ELITE };
 		bool bInAction = true;
 		bool bDay = false;
 		bool bCustom;

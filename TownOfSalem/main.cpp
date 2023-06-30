@@ -4,7 +4,6 @@ using namespace std;
 
 int main() {
 	char custom[2];
-	char y[2];
 	cout << "Create Custom town? y/n ";
 	cin.getline(custom, 10);
 	int Size;

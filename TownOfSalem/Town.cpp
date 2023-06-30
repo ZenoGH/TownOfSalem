@@ -2,13 +2,13 @@
 #include "Actions.h"
 #include "OtherFunctions.h"
 #include "resource.h"
-enum {SKLRS, ZOMBIES, TOWN, ELITE};
+
 Town::Town(int Size, bool Custom) {
 	bCustom = Custom;
 	iSize = Size;
 	Townies = new Townie * [iSize];
 	Visits = new Visit * [iSize];
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	FillTown();
 	AssignRoles();
 	while (bInAction) {
@@ -30,13 +30,13 @@ void Town::AssignRoles() {
 	Action::SetupActions();
 	Role* role = new Role;
 	Faction* faction = new Faction; // Serial Killers
-	Factions[SKLRS] = faction;
+	Factions[NEUTRALS] = faction;
 	role->name = "Serial Killer";
 	role->pAction = Action::Actions[Action::ATTACK];
 	//role->bHostile = true;
-	faction->name = "Serial Killers";
+	faction->name = "Neutrals";
 	faction->pDefaultRole = role;
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 	role = new Role;
 	faction = new Faction; // The Elite
@@ -46,7 +46,7 @@ void Town::AssignRoles() {
 	faction->name = "The Upper Class";
 	faction->pDefaultRole = role;
 	faction->bIntel = true;
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 	role = new Role;
 	faction = new Faction; // Zombies
@@ -56,7 +56,7 @@ void Town::AssignRoles() {
 	faction->name = "Zombies";
 	faction->pDefaultRole = role;
 	faction->bIntel = true;
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 
 	role = new Role;
@@ -66,27 +66,27 @@ void Town::AssignRoles() {
 	role->pAction = Action::Actions[Action::BLOCK];
 	faction->name = "Town";
 	faction->pDefaultRole = role;
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 
 	role = new Role;
 	role->name = "Bodyguard";
 	role->pAction = Action::Actions[Action::PROTECT];
 	faction->name = "Town";
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 
 	role = new Role;
 	role->name = "Vigilante";
 	role->pAction = Action::Actions[Action::ATTACK];
 	faction->name = "Town";
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 	role = new Role;
 	role->name = "Civilian";
-	role->pAction = nullptr;
+	role->pAction = new Action;
 	faction->name = "Town";
-	Roles.insert({ role, faction });
+	Roles[role] = faction;
 
 
 	// Seed the random number generator
